@@ -1,0 +1,1330 @@
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+							<style>
+								body {
+									background-color: white; /* Ensure the iframe has a white background */
+								}
+
+								
+							</style>
+                        </head>
+                        <body>
+                            <!doctype <htmlhtml>
+ <headlang="ru">
+>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Цветовой морской бой</title>
+
+  <style>
+    :root {
+      --bg: #111318;
+      --panel-2: #242a38;
+      --text: #eef1f7;
+      --muted: #9ca6ba;
+      --accent: #7c5cff;
+      --good: #39d98a;
+      --bad: #ff5c7a;
+      --gold: #ffd166;
+      --border: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124, 92, 255, 0.25), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(57, 217, 138, 0.14), transparent 35%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 14px 44px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 7vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 1fr) minmax(340px, 560px);
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      header {
+        flex-direction: column;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    select,
+    button {
+      font: inherit;
+    }
+
+    select {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline: none;
+      max-width: 100%;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 11px 14px;
+      color: white;
+      background: var(--accent);
+      cursor: pointer;
+      font-weight: 650;
+      touch-action: manipulation;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn.secondary {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+    }
+
+    .btn.danger {
+      background: #34303a;
+      color: #ffd8df;
+      border: 1px solid rgba(255, 92, 122, 0.35);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      min-height: 240px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px dashed var(--border);
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      cursor: crosshair;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .empty {
+      padding: 30px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .hint {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .status {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      min-height: 66px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .message {
+      margin: 0 0 14px;
+      min-height: 24px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .message.good {
+      color: var(--good);
+      font-weight: 700;
+    }
+
+    .message.bad {
+      color: #ff9bad;
+    }
+
+    .board-scroll {
+      width: 100%;
+      overflow: auto;
+      padding: 4px 0 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .board {
+      --cell: 54px;
+      display: grid;
+      gap: 7px;
+      align-items: stretch;
+      justify-content: start;
+      min-width: max-content;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    @media (max-width: 480px) {
+      .board {
+        --cell: 48px;
+        gap: 6px;
+      }
+    }
+
+    .axis {
+      width: var(--cell);
+      height: var(--cell);
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-weight: 750;
+      font-size: 13px;
+    }
+
+    .axis.hit {
+      color: #07140d;
+      background: var(--good);
+      border-color: transparent;
+      box-shadow: 0 0 0 3px rgba(57, 217, 138, 0.18);
+    }
+
+    .corner {
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .cell {
+      width: var(--cell);
+      height: var(--cell);
+      border-radius: 15px;
+      border: 2px solid rgba(255,255,255,0.18);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,0.1),
+        0 8px 18px rgba(0,0,0,0.18);
+      touch-action: manipulation;
+    }
+
+    .cell:active {
+      transform: scale(0.97);
+      border-color: rgba(255,255,255,0.65);
+    }
+
+    @media (hover: hover) {
+      .cell:hover {
+        transform: translateY(-2px) scale(1.03);
+        border-color: rgba(255,255,255,0.55);
+      }
+    }
+
+    .cell.clicked::after {
+      content: "•";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 38px;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .cell.row-hit {
+      border-top-color: var(--good);
+      border-bottom-color: var(--good);
+    }
+
+    .cell.col-hit {
+      border-left-color: var(--good);
+      border-right-color: var(--good);
+    }
+
+    .cell.target {
+      outline: 4px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .cell.target::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.85);
+    }
+
+    .placement-cell {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.025));
+    }
+
+    .placement-cell::before {
+      content: "+";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,0.6);
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .rules {
+      margin-top: 14px;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+  <body</style>
+</head>
+
+>
+  <main class="app">
+    <header>
+      <div>
+        <h1>Цветовой морской бой</h1>
+        <p class="subtitle">
+          Загрузи картинку, выбери цвет пипеткой и найди его среди похожих оттенков.
+          Можно играть в одиночном режиме или в режиме, где первый игрок сам прячет цвет в выбранную ячейку.
+        </p>
+      </div>
+
+      <div class="badge">🎨 Игра на оттенки</div>
+    </header>
+
+    <section class="layout">
+      <div class="card">
+        <h2>1. Картинка и пипетка</h2>
+
+        <div class="controls">
+          <input id="imageInput" type="file" accept="image/*,.heic,.heif" />
+        </div>
+
+        <div class="canvas-wrap">
+          <div class="empty" id="emptyImage">
+            Загрузите изображение.<br />
+            Потом нажмите на картинку, чтобы выбрать цвет.
+          </div>
+
+          <canvas id="canvas" hidden></canvas>
+        </div>
+
+        <p class="hint">
+          После выбора цвета картинка станет чёрно-белой.
+          После победы или кнопки «Показать ответ» картинка снова станет цветной.
+        </p>
+
+        <ol class="rules">
+          <li>Загрузите изображение.</li>
+          <li>Выберите режим игры справа.</li>
+          <li>Нажмите на нужный участок картинки.</li>
+          <li>Найдите выбранный цвет в таблице.</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h2>2. Таблица оттенков</h2>
+
+        <div class="controls">
+          <select id="gameMode">
+            <option value="auto" selected>Режим 1: авто-ячейка</option>
+            <option value="manual">Режим 2: поставить цвет самому</option>
+          </select>
+
+          <select id="difficulty">
+            <option value="easy">Лёгкая: 5 × 5</option>
+            <option value="normal" selected>Средняя: 7 × 7</option>
+            <option value="hard">Сложная: 9 × 9</option>
+          </select>
+
+          <button class="btn secondary" id="newGridBtn" disabled>Новая сетка</button>
+          <button class="btn danger" id="revealBtn" disabled>Показать ответ</button>
+        </div>
+
+        <div class="status">
+          <div class="stat">
+            <div class="stat-label">Попытки</div>
+            <div class="stat-value" id="attemptsText">0</div>
+          </div>
+        </div>
+
+        <p class="message" id="message">
+          Сначала загрузите картинку.
+        </p>
+
+        <div class="board-scroll">
+          <div class="board" id="board"></div>
+        </div>
+
+        <p class="hint">
+          Если угадана строка или колонка — соответствующая метка становится зелёной с галочкой.
+          Цель — найти точную ячейку.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const imageInput = document.getElementById("imageInput");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    const emptyImage = document.getElementById("emptyImage");
+
+    const board = document.getElementById("board");
+    const gameMode = document.getElementById("gameMode");
+    const difficulty = document.getElementById("difficulty");
+    const newGridBtn = document.getElementById("newGridBtn");
+    const revealBtn = document.getElementById("revealBtn");
+    const attemptsText = document.getElementById("attemptsText");
+    const message = document.getElementById("message");
+
+    let originalImageData = null;
+    let pendingManualRgb = null;
+    let lastCanvasPickAt = 0;
+
+    const game = {
+      baseRgb: null,
+      grid: [],
+      size: 7,
+      target: { row: -1, col: -1 },
+      manualTarget: null,
+      isManualPlacement: false,
+      guessedRows: new Set(),
+      guessedCols: new Set(),
+      clickedCells: new Set(),
+      attempts: 0,
+      finished: false,
+      revealed: false
+    };
+
+    const LEVELS = {
+      easy: {
+        size: 5,
+        hueRange: 36,
+        chromaRange: 0.14,
+        lightRange: 0.15
+      },
+      normal: {
+        size: 7,
+        hueRange: 26,
+        chromaRange: 0.105,
+        lightRange: 0.115
+      },
+      hard: {
+        size: 9,
+        hueRange: 16,
+        chromaRange: 0.065,
+        lightRange: 0.075
+      }
+    };
+
+    imageInput.addEventListener("change", handleImageUpload);
+
+    canvas.addEventListener("pointerup", function(event) {
+      lastCanvasPickAt = Date.now();
+      pickColorFromPoint(event.clientX, event.clientY);
+    });
+
+    canvas.addEventListener("click", function(event) {
+      if (Date.now() - lastCanvasPickAt < 350) return;
+
+      lastCanvasPickAt = Date.now();
+      pickColorFromPoint(event.clientX, event.clientY);
+    });
+
+    canvas.addEventListener("touchend", function(event) {
+      if (window.PointerEvent) return;
+
+      event.preventDefault();
+
+      if (!event.changedTouches || !event.changedTouches.length) return;
+
+      const touch = event.changedTouches[0];
+
+      lastCanvasPickAt = Date.now();
+      pickColorFromPoint(touch.clientX, touch.clientY);
+    }, { passive: false });
+
+    newGridBtn.addEventListener("click", function() {
+      if (!game.baseRgb) return;
+
+      if (gameMode.value === "manual" && game.manualTarget) {
+        startGame(game.baseRgb, true, game.manualTarget);
+      } else {
+        startGame(game.baseRgb, true, null);
+      }
+    });
+
+    revealBtn.addEventListener("click", function() {
+      if (!game.baseRgb) return;
+
+      game.revealed = true;
+      game.finished = true;
+      game.guessedRows.add(game.target.row);
+      game.guessedCols.add(game.target.col);
+
+      restoreColorImage();
+
+      setMessage("Ответ показан. Картинка снова цветная.", "bad");
+      render();
+    });
+
+    difficulty.addEventListener("change", function() {
+      if (gameMode.value === "manual") {
+        const rgb = pendingManualRgb || game.baseRgb;
+
+        if (rgb) {
+          pendingManualRgb = rgb;
+          game.baseRgb = rgb;
+          game.manualTarget = null;
+          game.isManualPlacement = true;
+
+          grayscaleCanvas();
+          renderManualPlacementBoard();
+
+          newGridBtn.disabled = true;
+          revealBtn.disabled = true;
+
+          setMessage("Размер сетки изменён. Игрок 1: заново выберите ячейку для цвета.", "");
+        }
+
+        return;
+      }
+
+      if (game.baseRgb) {
+        startGame(game.baseRgb, true, null);
+      }
+    });
+
+    gameMode.addEventListener("change", function() {
+      pendingManualRgb = null;
+      game.manualTarget = null;
+
+      if (!originalImageData) {
+        resetGame(true);
+        setMessage("Сначала загрузите картинку.", "");
+        return;
+      }
+
+      if (!game.baseRgb) {
+        restoreColorImage();
+        resetGame(false);
+        setMessage("Режим изменён. Теперь нажмите на картинку, чтобы выбрать цвет.", "");
+        return;
+      }
+
+      if (gameMode.value === "manual") {
+        pendingManualRgb = game.baseRgb;
+        game.isManualPlacement = true;
+
+        grayscaleCanvas();
+        renderManualPlacementBoard();
+
+        newGridBtn.disabled = true;
+        revealBtn.disabled = true;
+
+        setMessage("Режим 2. Игрок 1: выберите ячейку, куда спрятать цвет.", "");
+      } else {
+        startGame(game.baseRgb, true, null);
+      }
+    });
+
+    function handleImageUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      setMessage("Загружаю изображение...", "");
+
+      const reader = new FileReader();
+
+      reader.onload = function() {
+        const img = new Image();
+
+        img.onload = function() {
+          drawLoadedImageToCanvas(img);
+        };
+
+        img.onerror = function() {
+          setMessage("Ошибка загрузки изображения.", "bad");
+          alert(
+            "Не удалось загрузить изображение. " +
+            "Если это HEIC/HEIF, попробуйте JPEG, PNG или скриншот."
+          );
+        };
+
+        img.src = reader.result;
+      };
+
+      reader.onerror = function() {
+        setMessage("Ошибка чтения файла.", "bad");
+        alert("Не удалось прочитать файл изображения.");
+      };
+
+      reader.readAsDataURL(file);
+
+      event.target.value = "";
+    }
+
+    function drawLoadedImageToCanvas(img) {
+      const maxW = 900;
+      const maxH = 620;
+
+      const naturalW = img.naturalWidth || img.width;
+      const naturalH = img.naturalHeight || img.height;
+
+      if (!naturalW || !naturalH) {
+        setMessage("Не удалось определить размер изображения.", "bad");
+        alert("Не удалось определить размер изображения.");
+        return;
+      }
+
+      const scale = Math.min(1, maxW / naturalW, maxH / naturalH);
+
+      canvas.width = Math.max(1, Math.round(naturalW * scale));
+      canvas.height = Math.max(1, Math.round(naturalH * scale));
+
+      canvas.hidden = false;
+      emptyImage.hidden = true;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      try {
+        originalImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      } catch (error) {
+        console.error(error);
+        setMessage("Не удалось прочитать пиксели изображения.", "bad");
+        alert("Не удалось прочитать пиксели изображения. Попробуйте другую картинку.");
+        return;
+      }
+
+      resetGame(false);
+      setMessage("Картинка загружена. Теперь нажмите на неё, чтобы выбрать цвет.", "");
+    }
+
+    function resetGame(hideCanvasIfNoImage) {
+      pendingManualRgb = null;
+
+      game.baseRgb = null;
+      game.grid = [];
+      game.size = 7;
+      game.target = { row: -1, col: -1 };
+      game.manualTarget = null;
+      game.isManualPlacement = false;
+      game.guessedRows = new Set();
+      game.guessedCols = new Set();
+      game.clickedCells = new Set();
+      game.attempts = 0;
+      game.finished = false;
+      game.revealed = false;
+
+      newGridBtn.disabled = true;
+      revealBtn.disabled = true;
+
+      if (hideCanvasIfNoImage && !originalImageData) {
+        canvas.hidden = true;
+        emptyImage.hidden = false;
+      }
+
+      render();
+    }
+
+    function pickColorFromPoint(clientX, clientY) {
+      if (canvas.hidden || !originalImageData) return;
+
+      const rect = canvas.getBoundingClientRect();
+
+      const x = Math.floor((clientX - rect.left) * canvas.width / rect.width);
+      const y = Math.floor((clientY - rect.top) * canvas.height / rect.height);
+
+      const safeX = clamp(x, 0, canvas.width - 1);
+      const safeY = clamp(y, 0, canvas.height - 1);
+
+      const index = (safeY * canvas.width + safeX) * 4;
+
+      const rgb = {
+        r: originalImageData.data[index],
+        g: originalImageData.data[index + 1],
+        b: originalImageData.data[index + 2]
+      };
+
+      if (gameMode.value === "manual") {
+        pendingManualRgb = rgb;
+
+        game.baseRgb = rgb;
+        game.manualTarget = null;
+        game.isManualPlacement = true;
+        game.grid = [];
+        game.target = { row: -1, col: -1 };
+        game.guessedRows = new Set();
+        game.guessedCols = new Set();
+        game.clickedCells = new Set();
+        game.attempts = 0;
+        game.finished = false;
+        game.revealed = false;
+
+        grayscaleCanvas();
+        renderManualPlacementBoard();
+
+        newGridBtn.disabled = true;
+        revealBtn.disabled = true;
+
+        setMessage("Игрок 1: выберите ячейку, куда спрятать цвет.", "");
+      } else {
+        startGame(rgb, true, null);
+      }
+    }
+
+    function startGame(rgb, makeImageGray, forcedTarget) {
+      const level = LEVELS[difficulty.value];
+
+      game.baseRgb = rgb;
+      game.size = level.size;
+      game.manualTarget = forcedTarget || null;
+      game.isManualPlacement = false;
+
+      game.guessedRows = new Set();
+      game.guessedCols = new Set();
+      game.clickedCells = new Set();
+      game.attempts = 0;
+      game.finished = false;
+      game.revealed = false;
+
+      const result = makeGrid(rgb, level, forcedTarget);
+
+      game.grid = result.grid;
+      game.target = result.target;
+
+      newGridBtn.disabled = false;
+      revealBtn.disabled = false;
+
+      if (makeImageGray) {
+        grayscaleCanvas();
+      }
+
+      if (forcedTarget) {
+        setMessage("Цвет спрятан. Игрок 2 должен найти его в таблице.", "");
+      } else {
+        setMessage("Цвет выбран и скрыт. Найдите его в таблице.", "");
+      }
+
+      render();
+    }
+
+    function renderManualPlacementBoard() {
+      board.innerHTML = "";
+
+      const level = LEVELS[difficulty.value];
+      const size = level.size;
+
+      game.size = size;
+      game.grid = [];
+      game.target = { row: -1, col: -1 };
+      game.guessedRows = new Set();
+      game.guessedCols = new Set();
+      game.clickedCells = new Set();
+      game.attempts = 0;
+      game.finished = false;
+      game.revealed = false;
+
+      attemptsText.textContent = "0";
+
+      board.style.gridTemplateColumns = "repeat(" + (size + 1) + ", var(--cell))";
+
+      const corner = document.createElement("div");
+      corner.className = "axis corner";
+      board.appendChild(corner);
+
+      for (let col = 0; col < size; col++) {
+        const axis = document.createElement("div");
+        axis.className = "axis";
+        axis.textContent = "К" + (col + 1);
+        board.appendChild(axis);
+      }
+
+      for (let row = 0; row < size; row++) {
+        const rowAxis = document.createElement("div");
+        rowAxis.className = "axis";
+        rowAxis.textContent = "С" + (row + 1);
+        board.appendChild(rowAxis);
+
+        for (let col = 0; col < size; col++) {
+          const button = document.createElement("button");
+          button.className = "cell placement-cell";
+          button.type = "button";
+          button.title = "Спрятать цвет: строка " + (row + 1) + ", колонка " + (col + 1);
+
+          button.addEventListener("click", function() {
+            placeManualTarget(row, col);
+          });
+
+          board.appendChild(button);
+        }
+      }
+    }
+
+    function placeManualTarget(row, col) {
+      if (!pendingManualRgb) return;
+
+      const forcedTarget = {
+        row: row,
+        col: col
+      };
+
+      game.manualTarget = forcedTarget;
+
+      startGame(pendingManualRgb, true, forcedTarget);
+
+      pendingManualRgb = null;
+
+      setMessage("Цвет спрятан в выбранной ячейке. Передайте игру второму игроку.", "");
+    }
+
+    function cloneImageData(imageData) {
+      const clone = ctx.createImageData(imageData.width, imageData.height);
+      clone.data.set(imageData.data);
+      return clone;
+    }
+
+    function grayscaleCanvas() {
+      if (!originalImageData) return;
+
+      const grayData = cloneImageData(originalImageData);
+      const data = grayData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+
+        const gray = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+
+        data[i] = gray;
+        data[i + 1] = gray;
+        data[i + 2] = gray;
+      }
+
+      ctx.putImageData(grayData, 0, 0);
+    }
+
+    function restoreColorImage() {
+      if (!originalImageData) return;
+
+      ctx.putImageData(cloneImageData(originalImageData), 0, 0);
+    }
+
+    function handleCellClick(row, col) {
+      if (game.finished || game.isManualPlacement) return;
+
+      game.attempts += 1;
+      game.clickedCells.add(row + ":" + col);
+
+      const rowHit = row === game.target.row;
+      const colHit = col === game.target.col;
+
+      if (rowHit) game.guessedRows.add(row);
+      if (colHit) game.guessedCols.add(col);
+
+      if (rowHit && colHit) {
+        game.finished = true;
+        restoreColorImage();
+        setMessage("Победа! Вы нашли цвет за " + game.attempts + " попыток. Картинка снова цветная.", "good");
+      } else if (rowHit) {
+        setMessage("Верная строка ✓ Но колонка другая.", "");
+      } else if (colHit) {
+        setMessage("Верная колонка ✓ Но строка другая.", "");
+      } else {
+        setMessage("Мимо. Попробуйте другую ячейку.", "bad");
+      }
+
+      render();
+    }
+
+    function render() {
+      attemptsText.textContent = String(game.attempts);
+      renderBoard();
+    }
+
+    function renderBoard() {
+      board.innerHTML = "";
+
+      if (!game.grid.length) {
+        board.style.gridTemplateColumns = "1fr";
+        return;
+      }
+
+      const size = game.size;
+      board.style.gridTemplateColumns = "repeat(" + (size + 1) + ", var(--cell))";
+
+      const corner = document.createElement("div");
+      corner.className = "axis corner";
+      board.appendChild(corner);
+
+      for (let col = 0; col < size; col++) {
+        const axis = document.createElement("div");
+        axis.className = "axis";
+
+        if (game.guessedCols.has(col)) {
+          axis.classList.add("hit");
+          axis.textContent = "✓";
+          axis.title = "Верная колонка";
+        } else {
+          axis.textContent = "К" + (col + 1);
+          axis.title = "Колонка";
+        }
+
+        board.appendChild(axis);
+      }
+
+      for (let row = 0; row < size; row++) {
+        const rowAxis = document.createElement("div");
+        rowAxis.className = "axis";
+
+        if (game.guessedRows.has(row)) {
+          rowAxis.classList.add("hit");
+          rowAxis.textContent = "✓";
+          rowAxis.title = "Верная строка";
+        } else {
+          rowAxis.textContent = "С" + (row + 1);
+          rowAxis.title = "Строка";
+        }
+
+        board.appendChild(rowAxis);
+
+        for (let col = 0; col < size; col++) {
+          const cell = game.grid[row][col];
+
+          const button = document.createElement("button");
+          button.className = "cell";
+          button.type = "button";
+          button.style.backgroundColor = cell.hex;
+          button.title = "Строка " + (row + 1) + ", колонка " + (col + 1);
+
+          const key = row + ":" + col;
+
+          if (game.clickedCells.has(key)) {
+            button.classList.add("clicked");
+          }
+
+          if (game.guessedRows.has(row)) {
+            button.classList.add("row-hit");
+          }
+
+          if (game.guessedCols.has(col)) {
+            button.classList.add("col-hit");
+          }
+
+          if (
+            (game.finished || game.revealed) &&
+            row === game.target.row &&
+            col === game.target.col
+          ) {
+            button.classList.add("target");
+          }
+
+          button.addEventListener("click", function() {
+            handleCellClick(row, col);
+          });
+
+          board.appendChild(button);
+        }
+      }
+    }
+
+    function setMessage(text, type) {
+      message.textContent = text;
+      message.className = "message";
+
+      if (type) {
+        message.classList.add(type);
+      }
+    }
+
+    function makeGrid(rgb, level, forcedTarget) {
+      const base = rgbToOklch(rgb);
+      const size = level.size;
+
+      const isGray = base.c < 0.018 || Number.isNaN(base.h);
+
+      const targetPosition = forcedTarget || pickBalancedTargetPosition(size);
+      const targetRow = targetPosition.row;
+      const targetCol = targetPosition.col;
+
+      const hueOffsets = makeOffsetsWithTargetIndex(
+        size,
+        targetCol,
+        -level.hueRange,
+        level.hueRange,
+        2.2
+      );
+
+      const chromaOffsets = makeOffsetsWithTargetIndex(
+        size,
+        targetRow,
+        -level.chromaRange,
+        level.chromaRange,
+        0.012
+      );
+
+      const lightOffsets = makeOffsetsWithTargetIndex(
+        size,
+        targetCol,
+        -level.lightRange,
+        level.lightRange,
+        0.014
+      );
+
+      const grid = [];
+
+      for (let row = 0; row < size; row++) {
+        const line = [];
+
+        for (let col = 0; col < size; col++) {
+          let candidate;
+
+          if (isGray) {
+            candidate = {
+              l: clamp(base.l + lightOffsets[col], 0, 1),
+              c: Math.max(0, base.c + chromaOffsets[row]),
+              h: 250
+            };
+          } else {
+            candidate = {
+              l: clamp(base.l + lightOffsets[col] * 0.22, 0, 1),
+              c: Math.max(0, base.c + chromaOffsets[row]),
+              h: normalizeHue(base.h + hueOffsets[col])
+            };
+          }
+
+          let hex = oklchToHex(candidate);
+
+          if (row === targetRow && col === targetCol) {
+            hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+          }
+
+          line.push({
+            row: row,
+            col: col,
+            hex: hex
+          });
+        }
+
+        grid.push(line);
+      }
+
+      return {
+        grid: grid,
+        target: {
+          row: targetRow,
+          col: targetCol
+        }
+      };
+    }
+
+    function pickBalancedTargetPosition(size) {
+      const edgeWeight = 1.0;
+      const innerWeight = 1.09;
+
+      const cells = [];
+      let totalWeight = 0;
+
+      for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+          const isEdge =
+            row === 0 ||
+            row === size - 1 ||
+            col === 0 ||
+            col === size - 1;
+
+          const weight = isEdge ? edgeWeight : innerWeight;
+
+          cells.push({
+            row: row,
+            col: col,
+            weight: weight
+          });
+
+          totalWeight += weight;
+        }
+      }
+
+      let random = Math.random() * totalWeight;
+
+      for (let i = 0; i < cells.length; i++) {
+        random -= cells[i].weight;
+
+        if (random <= 0) {
+          return {
+            row: cells[i].row,
+            col: cells[i].col
+          };
+        }
+      }
+
+      return {
+        row: cells[cells.length - 1].row,
+        col: cells[cells.length - 1].col
+      };
+    }
+
+    function makeOffsetsWithTargetIndex(size, targetIndex, min, max, minDistanceFromZero) {
+      const negativeCount = targetIndex;
+      const positiveCount = size - targetIndex - 1;
+
+      const negatives = [];
+      const positives = [];
+
+      for (let i = 0; i < negativeCount; i++) {
+        negatives.push(randomBetween(min, -minDistanceFromZero));
+      }
+
+      for (let i = 0; i < positiveCount; i++) {
+        positives.push(randomBetween(minDistanceFromZero, max));
+      }
+
+      negatives.sort(function(a, b) {
+        return a - b;
+      });
+
+      positives.sort(function(a, b) {
+        return a - b;
+      });
+
+      return negatives.concat([0], positives);
+    }
+
+    function randomBetween(min, max) {
+      return min + Math.random() * (max - min);
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + [r, g, b].map(function(v) {
+        return clamp(Math.round(v), 0, 255).toString(16).padStart(2, "0");
+      }).join("");
+    }
+
+    function oklchToHex(oklch) {
+      const rgb = oklchToRgb(oklch);
+      return rgbToHex(rgb.r, rgb.g, rgb.b);
+    }
+
+    function rgbToOklch(rgb) {
+      const sr = rgb.r / 255;
+      const sg = rgb.g / 255;
+      const sb = rgb.b / 255;
+
+      const r = srgbToLinear(sr);
+      const g = srgbToLinear(sg);
+      const b = srgbToLinear(sb);
+
+      const l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+      const m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+      const s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+      const l_ = Math.cbrt(l);
+      const m_ = Math.cbrt(m);
+      const s_ = Math.cbrt(s);
+
+      const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+      const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+      const bb = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+      const C = Math.sqrt(a * a + bb * bb);
+      let H = Math.atan2(bb, a) * 180 / Math.PI;
+
+      if (H < 0) H += 360;
+
+      return {
+        l: L,
+        c: C,
+        h: H
+      };
+    }
+
+    function oklchToRgb(oklch) {
+      const L = oklch.l;
+      const C = oklch.c;
+      const H = oklch.h * Math.PI / 180;
+
+      const a = C * Math.cos(H);
+      const b = C * Math.sin(H);
+
+      const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+      const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+      const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+
+      const l = l_ * l_ * l_;
+      const m = m_ * m_ * m_;
+      const s = s_ * s_ * s_;
+
+      let r = +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+      let g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+      let bb = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+
+      r = linearToSrgb(r);
+      g = linearToSrgb(g);
+      bb = linearToSrgb(bb);
+
+      return {
+        r: clamp(Math.round(r * 255), 0, 255),
+        g: clamp(Math.round(g * 255), 0, 255),
+        b: clamp(Math.round(bb * 255), 0, 255)
+      };
+    }
+
+    function srgbToLinear(x) {
+      if (x <= 0.04045) return x / 12.92;
+      return Math.pow((x + 0.055) / 1.055, 2.4);
+    }
+
+    function linearToSrgb(x) {
+      x = clamp(x, 0, 1);
+
+      if (x <= 0.0031308) return 12.92 * x;
+
+      return 1.055 * Math.pow(x, 1 / 2.4) - 0.055;
+    }
+
+    function normalizeHue(h) {
+      return ((h % 360) + 360) % 360;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    resetGame(true);
+  </script>
+</body>
+</html>
+
+
+
+							<script>
+                            	
+							</script>
+                        </body>
+                        </html>
+                    
