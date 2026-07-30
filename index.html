@@ -1,23 +1,11 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-							<style>
-								body {
-									background-color: white; /* Ensure the iframe has a white background */
-								}
-
-								
-							</style>
-                        </head>
-                        <body>
-                            <!doctype <htmlhtml>
+<!doctype <htmlhtml>
  <headlang="ru">
 >
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  />
   <title>Цветовой морской бой</title>
 
   <style>
@@ -38,6 +26,10 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -47,6 +39,7 @@
         radial-gradient(circle at bottom right, rgba(57, 217, 138, 0.14), transparent 35%),
         var(--bg);
       color: var(--text);
+      overflow-x: hidden;
     }
 
     .app {
@@ -115,6 +108,7 @@
       box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
+      min-width: 0;
     }
 
     .card h2 {
@@ -134,12 +128,13 @@
     input[type="file"] {
       width: 100%;
       color: var(--muted);
-      font-size: 15px;
+      font-size: 16px;
     }
 
     select,
     button {
       font: inherit;
+      font-size: 16px;
     }
 
     select {
@@ -192,16 +187,117 @@
       border-radius: 18px;
       border: 1px dashed var(--border);
       background: rgba(0, 0, 0, 0.18);
+      padding: 0;
+      width: 100%;
+    }
+
+    .canvas-stage {
+      position: relative;
+      display: inline-block;
+      max-width: 100%;
+      line-height: 0;
     }
 
     canvas {
-      max-width: 100%;
-      height: auto;
       display: block;
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      max-height: 62vh;
       cursor: crosshair;
-      touch-action: manipulation;
+      touch-action: none;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    .pick-marker {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      transform: translate(-50%, -50%);
+      border: 2px solid white;
+      border-radius: 999px;
+      box-shadow:
+        0 0 0 2px rgba(0,0,0,0.55),
+        0 6px 18px rgba(0,0,0,0.45);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .pick-marker::before,
+    .pick-marker::after {
+      content: "";
+      position: absolute;
+      background: white;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.65);
+    }
+
+    .pick-marker::before {
+      width: 2px;
+      height: 46px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .pick-marker::after {
+      width: 46px;
+      height: 2px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .pick-preview {
+      margin-top: 12px;
+      display: none;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .pick-preview.show {
+      display: flex;
+    }
+
+    .swatch {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.35);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+      flex: 0 0 auto;
+    }
+
+    .pick-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .pick-title {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .pick-value {
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    @media (max-width: 520px) {
+      .pick-preview {
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+
+      .pick-preview .btn {
+        width: 100%;
+      }
     }
 
     .empty {
@@ -406,8 +502,8 @@
       <div>
         <h1>Цветовой морской бой</h1>
         <p class="subtitle">
-          Загрузи картинку, выбери цвет пипеткой и найди его среди похожих оттенков.
-          Можно играть в одиночном режиме или в режиме, где первый игрок сам прячет цвет в выбранную ячейку.
+          Загрузи картинку, тапни по нужному месту, проверь выбранный цвет и нажми «Выбрать цвет».
+          Потом найди этот оттенок в таблице.
         </p>
       </div>
 
@@ -428,19 +524,34 @@
             Потом нажмите на картинку, чтобы выбрать цвет.
           </div>
 
-          <canvas id="canvas" hidden></canvas>
+          <div class="canvas-stage" id="canvasStage" hidden>
+            <canvas id="canvas"></canvas>
+            <div class="pick-marker" id="pickMarker" hidden></div>
+          </div>
+        </div>
+
+        <div class="pick-preview" id="pickPreview">
+          <div class="swatch" id="pickSwatch"></div>
+
+          <div class="pick-info">
+            <div class="pick-title">Выбранный цвет</div>
+            <div class="pick-value" id="pickText">—</div>
+          </div>
+
+          <button class="btn" id="confirmPickBtn" type="button">Выбрать цвет</button>
         </div>
 
         <p class="hint">
-          После выбора цвета картинка станет чёрно-белой.
-          После победы или кнопки «Показать ответ» картинка снова станет цветной.
+          Теперь тап по картинке только ставит крестик и показывает цвет.
+          Игра начнётся только после кнопки «Выбрать цвет».
         </p>
 
         <ol class="rules">
           <li>Загрузите изображение.</li>
           <li>Выберите режим игры справа.</li>
-          <li>Нажмите на нужный участок картинки.</li>
-          <li>Найдите выбранный цвет в таблице.</li>
+          <li>Тапните по картинке.</li>
+          <li>Проверьте цвет в плашке.</li>
+          <li>Нажмите «Выбрать цвет».</li>
         </ol>
       </div>
 
@@ -488,9 +599,17 @@
 
   <script>
     const imageInput = document.getElementById("imageInput");
+
+    const canvasStage = document.getElementById("canvasStage");
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     const emptyImage = document.getElementById("emptyImage");
+
+    const pickMarker = document.getElementById("pickMarker");
+    const pickPreview = document.getElementById("pickPreview");
+    const pickSwatch = document.getElementById("pickSwatch");
+    const pickText = document.getElementById("pickText");
+    const confirmPickBtn = document.getElementById("confirmPickBtn");
 
     const board = document.getElementById("board");
     const gameMode = document.getElementById("gameMode");
@@ -501,8 +620,9 @@
     const message = document.getElementById("message");
 
     let originalImageData = null;
+    let pendingPickRgb = null;
     let pendingManualRgb = null;
-    let lastCanvasPickAt = 0;
+    let lastCanvasTapAt = 0;
 
     const game = {
       baseRgb: null,
@@ -543,15 +663,17 @@
     imageInput.addEventListener("change", handleImageUpload);
 
     canvas.addEventListener("pointerup", function(event) {
-      lastCanvasPickAt = Date.now();
-      pickColorFromPoint(event.clientX, event.clientY);
+      event.preventDefault();
+      lastCanvasTapAt = Date.now();
+      previewColorFromPoint(event.clientX, event.clientY);
     });
 
     canvas.addEventListener("click", function(event) {
-      if (Date.now() - lastCanvasPickAt < 350) return;
+      if (Date.now() - lastCanvasTapAt < 350) return;
 
-      lastCanvasPickAt = Date.now();
-      pickColorFromPoint(event.clientX, event.clientY);
+      event.preventDefault();
+      lastCanvasTapAt = Date.now();
+      previewColorFromPoint(event.clientX, event.clientY);
     });
 
     canvas.addEventListener("touchend", function(event) {
@@ -563,12 +685,18 @@
 
       const touch = event.changedTouches[0];
 
-      lastCanvasPickAt = Date.now();
-      pickColorFromPoint(touch.clientX, touch.clientY);
+      lastCanvasTapAt = Date.now();
+      previewColorFromPoint(touch.clientX, touch.clientY);
     }, { passive: false });
+
+    confirmPickBtn.addEventListener("click", function() {
+      confirmPickedColor();
+    });
 
     newGridBtn.addEventListener("click", function() {
       if (!game.baseRgb) return;
+
+      hidePickPreview();
 
       if (gameMode.value === "manual" && game.manualTarget) {
         startGame(game.baseRgb, true, game.manualTarget);
@@ -579,6 +707,8 @@
 
     revealBtn.addEventListener("click", function() {
       if (!game.baseRgb) return;
+
+      hidePickPreview();
 
       game.revealed = true;
       game.finished = true;
@@ -592,6 +722,8 @@
     });
 
     difficulty.addEventListener("change", function() {
+      hidePickPreview();
+
       if (gameMode.value === "manual") {
         const rgb = pendingManualRgb || game.baseRgb;
 
@@ -619,6 +751,8 @@
     });
 
     gameMode.addEventListener("change", function() {
+      hidePickPreview();
+
       pendingManualRgb = null;
       game.manualTarget = null;
 
@@ -631,7 +765,7 @@
       if (!game.baseRgb) {
         restoreColorImage();
         resetGame(false);
-        setMessage("Режим изменён. Теперь нажмите на картинку, чтобы выбрать цвет.", "");
+        setMessage("Режим изменён. Теперь тапните по картинке, проверьте цвет и нажмите «Выбрать цвет».", "");
         return;
       }
 
@@ -655,6 +789,7 @@
       const file = event.target.files && event.target.files[0];
       if (!file) return;
 
+      hidePickPreview();
       setMessage("Загружаю изображение...", "");
 
       const reader = new FileReader();
@@ -705,7 +840,7 @@
       canvas.width = Math.max(1, Math.round(naturalW * scale));
       canvas.height = Math.max(1, Math.round(naturalH * scale));
 
-      canvas.hidden = false;
+      canvasStage.hidden = false;
       emptyImage.hidden = true;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -721,10 +856,11 @@
       }
 
       resetGame(false);
-      setMessage("Картинка загружена. Теперь нажмите на неё, чтобы выбрать цвет.", "");
+      setMessage("Картинка загружена. Тапните по ней, проверьте цвет и нажмите «Выбрать цвет».", "");
     }
 
     function resetGame(hideCanvasIfNoImage) {
+      pendingPickRgb = null;
       pendingManualRgb = null;
 
       game.baseRgb = null;
@@ -744,20 +880,24 @@
       revealBtn.disabled = true;
 
       if (hideCanvasIfNoImage && !originalImageData) {
-        canvas.hidden = true;
+        canvasStage.hidden = true;
         emptyImage.hidden = false;
       }
 
+      hidePickPreview();
       render();
     }
 
-    function pickColorFromPoint(clientX, clientY) {
-      if (canvas.hidden || !originalImageData) return;
+    function previewColorFromPoint(clientX, clientY) {
+      if (canvasStage.hidden || !originalImageData) return;
 
       const rect = canvas.getBoundingClientRect();
 
-      const x = Math.floor((clientX - rect.left) * canvas.width / rect.width);
-      const y = Math.floor((clientY - rect.top) * canvas.height / rect.height);
+      const displayX = clientX - rect.left;
+      const displayY = clientY - rect.top;
+
+      const x = Math.floor(displayX * canvas.width / rect.width);
+      const y = Math.floor(displayY * canvas.height / rect.height);
 
       const safeX = clamp(x, 0, canvas.width - 1);
       const safeY = clamp(y, 0, canvas.height - 1);
@@ -769,6 +909,38 @@
         g: originalImageData.data[index + 1],
         b: originalImageData.data[index + 2]
       };
+
+      pendingPickRgb = rgb;
+
+      const xPercent = clamp(displayX / rect.width, 0, 1) * 100;
+      const yPercent = clamp(displayY / rect.height, 0, 1) * 100;
+
+      pickMarker.hidden = false;
+      pickMarker.style.left = xPercent + "%";
+      pickMarker.style.top = yPercent + "%";
+
+      const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+      pickSwatch.style.backgroundColor = hex;
+      pickText.textContent = hex + " · RGB(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ")";
+      pickPreview.classList.add("show");
+
+      setMessage("Цвет выбран предварительно. Если всё верно — нажмите «Выбрать цвет».", "");
+    }
+
+    function confirmPickedColor() {
+      if (!pendingPickRgb) {
+        setMessage("Сначала тапните по картинке, чтобы выбрать цвет.", "bad");
+        return;
+      }
+
+      const rgb = {
+        r: pendingPickRgb.r,
+        g: pendingPickRgb.g,
+        b: pendingPickRgb.b
+      };
+
+      hidePickPreview();
 
       if (gameMode.value === "manual") {
         pendingManualRgb = rgb;
@@ -795,6 +967,13 @@
       } else {
         startGame(rgb, true, null);
       }
+
+      pendingPickRgb = null;
+    }
+
+    function hidePickPreview() {
+      pickPreview.classList.remove("show");
+      pickMarker.hidden = true;
     }
 
     function startGame(rgb, makeImageGray, forcedTarget) {
@@ -1144,8 +1323,13 @@
     }
 
     function pickBalancedTargetPosition(size) {
+      /*
+        Все веса выставлены в 1.0.
+        Теперь авто-ячейка выбирается равномерно среди всех клеток.
+      */
+
       const edgeWeight = 1.0;
-      const innerWeight = 1.09;
+      const innerWeight = 1.0;
 
       const cells = [];
       let totalWeight = 0;
@@ -1319,12 +1503,3 @@
   </script>
 </body>
 </html>
-
-
-
-							<script>
-                            	
-							</script>
-                        </body>
-                        </html>
-                    
